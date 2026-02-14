@@ -28,7 +28,7 @@ import {
 } from "../holidays/holidays";
 
 export function computeDeadline(input: ComputeInput): ComputeOutput {
-  const { rule, serviceDate, serviceMethod, court } = input;
+  const { rule, serviceDate, serviceMethod, court, caseName } = input;
   const steps: ComputeStep[] = [];
   const warnings: string[] = [];
   let stepNumber = 0;
@@ -197,6 +197,7 @@ export function computeDeadline(input: ComputeInput): ComputeOutput {
     serviceDate,
     serviceMethod,
     court,
+    caseName: caseName || undefined,
     ruleName: rule.name,
     rulePackVersion: rulePackV1.version,
     steps,

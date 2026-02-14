@@ -3,7 +3,8 @@
 /**
  * Calculator Input Form
  *
- * Four fields: Court, Trigger Document, Service Method, Service Date.
+ * Five fields: Court, Trigger Document, Service Method, Service Date,
+ * and an optional Case Name/Number.
  * Service method has NO default — the attorney must explicitly select
  * how the document was served, because it affects the deadline by 3 days.
  */
@@ -25,6 +26,7 @@ export function CalculatorForm({ onResult }: CalculatorFormProps) {
   );
   const [serviceMethod, setServiceMethod] = useState<ServiceMethod | "">("");
   const [serviceDate, setServiceDate] = useState<string>("");
+  const [caseName, setCaseName] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   // Filter rules by selected court
@@ -58,6 +60,7 @@ export function CalculatorForm({ onResult }: CalculatorFormProps) {
       serviceDate,
       serviceMethod,
       court,
+      caseName: caseName.trim() || undefined,
     });
 
     onResult(result);
@@ -124,11 +127,6 @@ export function CalculatorForm({ onResult }: CalculatorFormProps) {
             </option>
           ))}
         </select>
-        {availableRules.length === 1 && (
-          <p className="mt-1 text-xs text-navy-400">
-            v0.1 supports one rule. More triggers coming soon.
-          </p>
-        )}
       </div>
 
       {/* ── Service Method ─────────────────────────────────── */}
@@ -205,6 +203,31 @@ export function CalculatorForm({ onResult }: CalculatorFormProps) {
         />
         <p className="mt-1 text-xs text-navy-400">
           Date on the certificate of service
+        </p>
+      </div>
+
+      {/* ── Case Name / Number (optional) ────────────────── */}
+      <div>
+        <label
+          htmlFor="caseName"
+          className="block text-sm font-semibold text-navy-800 mb-2"
+        >
+          Case Name or Number{" "}
+          <span className="font-normal text-navy-400">(optional)</span>
+        </label>
+        <input
+          type="text"
+          id="caseName"
+          value={caseName}
+          onChange={(e) => setCaseName(e.target.value)}
+          placeholder="e.g., Smith v. Jones or 24-CVS-1234"
+          className="w-full rounded-lg border border-navy-200 bg-white px-3 py-2.5 text-sm
+                     text-navy-800 placeholder:text-navy-300
+                     focus:ring-2 focus:ring-gold-500 focus:border-gold-500
+                     outline-none transition-colors"
+        />
+        <p className="mt-1 text-xs text-navy-400">
+          Included in calendar events and receipt exports
         </p>
       </div>
 

@@ -29,11 +29,15 @@ export function ActionButtons({ output }: ActionButtonsProps) {
       )
       .join("\n");
 
+    // Include case name in the ICS summary and description when provided
+    const caseLabel = output.caseName ? ` — ${output.caseName}` : "";
+
     const content = generateICSContent({
       date: output.deadline,
-      summary: `DEADLINE: ${output.deadlineAction}`,
+      summary: `DEADLINE: ${output.deadlineAction}${caseLabel}`,
       description: [
         output.deadlineAction,
+        ...(output.caseName ? [`Case: ${output.caseName}`] : []),
         `Due: ${output.deadlineFormatted} (${output.deadlineDay})`,
         "",
         `Rule: ${output.ruleName}`,

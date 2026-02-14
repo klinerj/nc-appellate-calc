@@ -23,6 +23,9 @@ export interface ComputeInput {
 
   /** The court level (for display; rule already encodes applicability) */
   court: Court;
+
+  /** Optional case name or number (e.g., "Smith v. Jones" or "23-CVS-1234") */
+  caseName?: string;
 }
 
 /**
@@ -77,6 +80,9 @@ export interface ComputeOutput {
 
   /** Echo back: the court */
   court: Court;
+
+  /** Echo back: optional case name or number (undefined if not provided) */
+  caseName?: string;
 
   /** The rule name that was applied */
   ruleName: string;

@@ -16,6 +16,11 @@ export function ResultBanner({ output }: ResultBannerProps) {
 
   return (
     <div className="bg-navy-900 text-white px-6 py-8 text-center">
+      {output.caseName && (
+        <p className="text-sm font-medium text-navy-100/60 mb-1">
+          {output.caseName}
+        </p>
+      )}
       <p className="text-xs font-semibold uppercase tracking-widest text-gold-400">
         {output.deadlineAction}
       </p>

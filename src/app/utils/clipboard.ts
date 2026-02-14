@@ -25,6 +25,7 @@ export async function copyReceiptToClipboard(
 
   const text = [
     `DEADLINE: ${output.deadlineAction}`,
+    ...(output.caseName ? [`Case: ${output.caseName}`] : []),
     `Due: ${output.deadlineFormatted} (${output.deadlineDay})`,
     "",
     `Rule: ${output.ruleName} — ${output.steps[1]?.citation ?? ""}`,
