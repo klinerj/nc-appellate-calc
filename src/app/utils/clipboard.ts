@@ -1,21 +1,18 @@
 /**
  * Clipboard Utility
  *
- * Copies a formatted deadline receipt to the clipboard.
- * Falls back to execCommand for older browsers.
+ * Formats computation output as a plain-text receipt and copies it
+ * to the clipboard. The formatting function is exported separately
+ * for testability.
  */
 
 import type { ComputeOutput } from "../../engine/types";
 
 /**
- * Formats the computation output as a plain-text receipt
- * and copies it to the clipboard.
- *
- * Returns true if the copy succeeded.
+ * Formats the computation output as a plain-text receipt string.
+ * Pure function — no side effects, fully testable.
  */
-export async function copyReceiptToClipboard(
-  output: ComputeOutput,
-): Promise<boolean> {
+export function formatReceipt(output: ComputeOutput): string {
   const serviceMethodLabel =
     output.serviceMethod === "hand"
       ? "Hand Delivery"
@@ -23,7 +20,7 @@ export async function copyReceiptToClipboard(
         ? "U.S. Mail"
         : "Email";
 
-  const text = [
+  return [
     `DEADLINE: ${output.deadlineAction}`,
     ...(output.caseName ? [`Case: ${output.caseName}`] : []),
     `Due: ${output.deadlineFormatted} (${output.deadlineDay})`,
@@ -47,6 +44,18 @@ export async function copyReceiptToClipboard(
     "NC Appellate Deadline Calculator",
     "This tool is for reference only. Always verify deadlines independently.",
   ].join("\n");
+}
+
+/**
+ * Formats the computation output as a plain-text receipt
+ * and copies it to the clipboard.
+ *
+ * Returns true if the copy succeeded.
+ */
+export async function copyReceiptToClipboard(
+  output: ComputeOutput,
+): Promise<boolean> {
+  const text = formatReceipt(output);
 
   try {
     await navigator.clipboard.writeText(text);
