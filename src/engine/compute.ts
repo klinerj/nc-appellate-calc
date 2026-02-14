@@ -82,6 +82,7 @@ export function computeDeadline(input: ComputeInput): ComputeOutput {
   // period." Applies to mail and email service.
 
   if (serviceMethod !== "hand" && rule.serviceAddDays > 0) {
+    // Mail/email service WITH additional days (e.g., briefs)
     const methodLabel = serviceMethod === "mail" ? "U.S. mail" : "email";
     const adjustedDeadline = addDaysToDate(
       currentDeadline,
@@ -101,7 +102,23 @@ export function computeDeadline(input: ComputeInput): ComputeOutput {
       isAdjustment: true,
     });
     currentDeadline = adjustedDeadline;
+  } else if (serviceMethod !== "hand" && rule.serviceAddDays === 0) {
+    // Mail/email service but Rule 27(b) does NOT apply (e.g., Notice of Appeal)
+    const methodLabel = serviceMethod === "mail" ? "U.S. mail" : "email";
+    stepNumber++;
+    steps.push({
+      stepNumber,
+      label: `Service by ${methodLabel}`,
+      description:
+        `Rule 27(b) additional time does not apply to this filing — ` +
+        `no additional days added despite service by ${methodLabel}`,
+      citation: rule.serviceCitation,
+      dateBeforeStep: currentDeadline,
+      dateAfterStep: currentDeadline,
+      isAdjustment: false,
+    });
   } else {
+    // Hand delivery — never adds days
     stepNumber++;
     steps.push({
       stepNumber,
