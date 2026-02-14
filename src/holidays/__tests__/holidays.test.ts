@@ -71,7 +71,26 @@ describe("isHoliday", () => {
 
   it("returns false for dates in years without data", () => {
     expect(isHoliday("2025-01-01")).toBe(false);
-    expect(isHoliday("2027-01-01")).toBe(false);
+  });
+
+  it("recognizes all 2027 NC judicial holidays (provisional)", () => {
+    const holidays2027 = [
+      "2027-01-01", // New Year's Day (Friday)
+      "2027-01-18", // MLK Day (Monday)
+      "2027-03-26", // Good Friday (Friday)
+      "2027-05-31", // Memorial Day (Monday)
+      "2027-07-05", // Independence Day observed (Monday — Jul 4 is Sunday)
+      "2027-09-06", // Labor Day (Monday)
+      "2027-11-11", // Veterans Day (Thursday)
+      "2027-11-25", // Thanksgiving (Thursday)
+      "2027-11-26", // Day after Thanksgiving (Friday)
+      "2027-12-24", // Christmas Eve (Friday)
+      "2027-12-27", // Christmas observed (Monday — Dec 25 is Saturday)
+    ];
+
+    holidays2027.forEach((date) => {
+      expect(isHoliday(date)).toBe(true);
+    });
   });
 });
 
@@ -149,6 +168,22 @@ describe("rollForwardToBusinessDay", () => {
     expect(result.rolled).toBe(true);
     expect(result.steps).toHaveLength(1);
   });
+
+  it("rolls 2027 Good Friday through weekend to Monday", () => {
+    // Mar 26 (Fri holiday) → Mar 27 (Sat) → Mar 28 (Sun) → Mar 29 (Mon)
+    const result = rollForwardToBusinessDay("2027-03-26");
+    expect(result.date).toBe("2027-03-29");
+    expect(result.rolled).toBe(true);
+    expect(result.steps).toHaveLength(3);
+  });
+
+  it("rolls 2027 Christmas cluster to Tuesday", () => {
+    // Dec 24 (Fri holiday) → Dec 25 (Sat) → Dec 26 (Sun) → Dec 27 (Mon holiday) → Dec 28 (Tue)
+    const result = rollForwardToBusinessDay("2027-12-24");
+    expect(result.date).toBe("2027-12-28");
+    expect(result.rolled).toBe(true);
+    expect(result.steps).toHaveLength(4); // Fri, Sat, Sun, Mon
+  });
 });
 
 // ─── Date Arithmetic ──────────────────────────────────────────────
@@ -216,8 +251,12 @@ describe("isYearSupported", () => {
     expect(isYearSupported("2026-06-15")).toBe(true);
   });
 
+  it("returns true for 2027", () => {
+    expect(isYearSupported("2027-06-15")).toBe(true);
+  });
+
   it("returns false for years without data", () => {
     expect(isYearSupported("2025-06-15")).toBe(false);
-    expect(isYearSupported("2027-06-15")).toBe(false);
+    expect(isYearSupported("2028-06-15")).toBe(false);
   });
 });

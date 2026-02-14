@@ -241,12 +241,17 @@ describe("Output metadata", () => {
     );
   });
 
-  it("warns when holiday data is not verified for a year", () => {
-    // Service date in 2027 — no holiday data
+  it("sets holidayDataVerified to true for 2027 deadlines", () => {
     const result = computeDeadline(makeInput("2027-03-02", "hand"));
+    expect(result.holidayDataVerified).toBe(true);
+  });
+
+  it("warns when holiday data is not verified for a year", () => {
+    // Service date in 2028 — no holiday data
+    const result = computeDeadline(makeInput("2028-03-02", "hand"));
     expect(result.holidayDataVerified).toBe(false);
     expect(
-      result.warnings.some((w) => w.includes("Holiday data for 2027")),
+      result.warnings.some((w) => w.includes("Holiday data for 2028")),
     ).toBe(true);
   });
 });
